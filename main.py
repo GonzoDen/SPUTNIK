@@ -1,4 +1,8 @@
 import nltk
+
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
 
@@ -8,6 +12,8 @@ import tensorflow
 import random
 import json
 import pickle
+
+from tensorflow.python.framework import ops
 
 with open("intents.json") as file:
     data = json.load(file) #TODO: import json importing another file/ds with for todo upgrading
@@ -67,7 +73,7 @@ except:
 
 #NN:
 
-tensorflow.reset_default_graph()
+ops.reset_default_graph()
 
 net = tflearn.input_data(shape=[None, len(training[0])])
 net = tflearn.fully_connected(net, 8)
