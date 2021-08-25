@@ -1,7 +1,7 @@
 There are two ways of launching program:
 
 1. Creating a virtual environment
-This might be needed when you have multiple programs running on different versions of python and using different packages. I used to use condo on my previous computer. This time I decided to go with the option 2.
+This might be needed when you have multiple programs running on different versions of python and using different packages. Sometimes some packages can work only on specific versions of python (this happened to me last year that's why I used Conda virtual environment). As I changed my computer + all these got fixed, I decided to go with the option 2.
 
 2. Setting all in Terminal (basic environment):
 - Installing nltk, tensorflow: these are non-built-in libraries, so you will have to install them using 
@@ -18,5 +18,7 @@ For a more serious work, I suggest you go through explanation provided here: htt
 As this is a pet project, I focused more on the problem of failure itself, so try including this to your code:
 	import ssl
 	ssl._create_default_https_context = ssl._create_unverified_context
+
+Great thanx to the StackOverflow community!
 
 
