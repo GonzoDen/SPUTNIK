@@ -18,17 +18,19 @@ from tensorflow.python.framework import ops
 with open("intents.json") as file:
     data = json.load(file) #TODO: import json importing another file/ds with for todo upgrading
 
+## extracting data
 try:
+    #delete pickle.file if you change anything in intents file
     with open("data.pickle", "rb") as f:
         words, labels, training, output = pickle.load(f)
 except:
     words = []
     labels = []
-    docs_x = []
-    docs_y = []
+    docs_x = [] #what pattern (i)
+    docs_y = [] #what tag it's part of
 
     for intent in data["intents"]:
-        for pattern in intent["patterns"]:
+        for pattern in intent["patterns"]: #pattern == what user asks 
             wrds = nltk.word_tokenize(pattern)
             words.extend(wrds)
             docs_x.append(wrds)
@@ -38,7 +40,7 @@ except:
             labels.append(intent["tag"])
 
     words = [stemmer.stem(w.lower()) for w in words if w != "?"] #stemming == finding a root of the word, so bot can identify words
-    words = sorted(list(set(words)))
+    words = sorted(list(set(words))) #removing duplicates
 
     labels = sorted(labels)
 
@@ -48,7 +50,7 @@ except:
     out_empty = [0 for _ in range(len(labels))] 
 
     for x, doc in enumerate(docs_x):
-        bag = [] #darabase for detecting the presence 
+        bag = [] #database for detecting the presence 
 
         wrds = [stemmer.stem(w.lower()) for w in doc]
 
@@ -71,26 +73,27 @@ except:
     with open("data.pickle", "wb") as f:
         pickle.dump((words, labels, training, output), f)
 
-#NN:
+##  developing a model:
 
 ops.reset_default_graph()
 
 net = tflearn.input_data(shape=[None, len(training[0])])
+net = tflearn.fully_connected(net, 8) #first hidden layer 
 net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
-net = tflearn.regression(net)
+net = tflearn.fully_connected(net, len(output[0]), activation="softmax") #allow us to get probabilities for each output
+net = tflearn.regression(net) 
 
-model = tflearn.DNN(net)
+model = tflearn.DNN(net) #training
 
 try:
     model.load("model.tflearn")
 except:
-    #Training and saving the model
+## training and saving the model
     model = tflearn.DNN(net)
     model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
     model.save("model.tflearn")
 
+## making predictions
 def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]
 
